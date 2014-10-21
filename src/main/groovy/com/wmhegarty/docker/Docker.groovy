@@ -9,6 +9,14 @@ import static groovyx.net.http.ContentType.*
 public class Docker {
     static restClient = new RESTClient('http://localhost:4243')
 
+    public Docker(){
+        restClient = new RESTClient('http://localhost:4243')
+    }
+    
+    public Docker(ipAddress){
+        restClient = new RESTClient("http://${ipAddress}:4243")
+    }
+
     public getRunningContainerNames() {
         def response = restClient.get(path: '/containers/json')
         def names = response.data.collect() {
@@ -116,6 +124,12 @@ public class Docker {
                 case "env_vars":
                     it.value.each { result += " -e ${it}" }
                     break
+                case "link":
+                    result += " --link ${it.value}"
+                    break; 
+                case "links":
+                    it.value.each { result += " --link ${it}" }
+                    break;         
                 default:
                     result += " ${it.key} ${it.value}"
             }
