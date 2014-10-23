@@ -96,6 +96,14 @@ public class Docker {
         Shell.execute("docker rmi ${imageName}:${imageTag}")
     }
 
+    public exportContainer(String containerName) {
+        Shell.execute("docker export ${containerName} > ${containerName}.tar")
+    }
+
+    public importContainer(String containerName) {
+        Shell.execute("docker import - ${containerName} < ${containerName}.tar")
+    }
+
     private convertOptionsToArgs(options) {
         def result = ''
         options.each {
@@ -130,6 +138,9 @@ public class Docker {
                 case "links":
                     it.value.each { result += " --link ${it}" }
                     break;         
+                case "volumesFrom":
+                    it.value.each { result += " --volumes-from ${it}" }    
+                    break;    
                 default:
                     result += " ${it.key} ${it.value}"
             }
